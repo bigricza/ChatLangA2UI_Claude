@@ -1,0 +1,25 @@
+# FastAPI and server
+fastapi==0.115.0
+uvicorn[standard]==0.32.0
+
+# CopilotKit for AG-UI protocol
+copilotkit==0.1.26
+
+# LangChain and LangGraph (compatible with copilotkit 0.1.26)
+langchain>=0.3.3
+langchain-anthropic>=0.2.3,<0.3.0
+langchain-core>=0.3.0
+langgraph>=0.2.0
+
+# Data models and validation
+pydantic==2.10.6
+
+# Configuration and environment
+python-dotenv==1.0.0
+PyYAML==6.0.2
+
+# HTTP client (dependency)
+httpx==0.27.2
+
+# Async support
+anyio==4.6.2.post1

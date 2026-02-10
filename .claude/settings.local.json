@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -m pip install:*)",
+      "Bash(curl:*)",
+      "Bash(python -m json.tool:*)",
+      "Bash(python -m app.main:*)",
+      "WebFetch(domain:www.copilotkit.ai)",
+      "Bash(npm install:*)",
+      "Bash(npm search:*)",
+      "Bash(python:*)"
+    ]
+  }
+}

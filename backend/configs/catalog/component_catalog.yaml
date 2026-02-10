@@ -1,0 +1,157 @@
+# A2UI Component Catalog Definition
+# Maps A2UI component types to their properties and usage
+
+version: "0.8"
+protocol: "A2UI"
+
+components:
+  Text:
+    description: "Text display component with usage hints for styling"
+    props:
+      text:
+        type: "LiteralString"
+        required: true
+        description: "Text content to display"
+      usage_hint:
+        type: "string"
+        required: false
+        default: "body"
+        options: ["title", "subtitle", "body"]
+        description: "Visual styling hint"
+
+  Button:
+    description: "Interactive button component"
+    props:
+      text:
+        type: "LiteralString"
+        required: true
+        description: "Button label"
+      actionId:
+        type: "string"
+        required: true
+        description: "Identifier for button action handler"
+      usage_hint:
+        type: "string"
+        required: false
+        default: "primary"
+        options: ["primary", "secondary"]
+        description: "Button styling hint"
+
+  Card:
+    description: "Container component with optional title for grouping related content"
+    props:
+      children:
+        type: "array<string>"
+        required: true
+        description: "List of child component IDs"
+      title:
+        type: "LiteralString"
+        required: false
+        description: "Optional card title"
+
+  Row:
+    description: "Horizontal layout container"
+    props:
+      children:
+        type: "array<string>"
+        required: true
+        description: "List of child component IDs arranged horizontally"
+
+  Column:
+    description: "Vertical layout container"
+    props:
+      children:
+        type: "array<string>"
+        required: true
+        description: "List of child component IDs arranged vertically"
+
+  Table:
+    description: "Data table component with column definitions and data binding"
+    props:
+      columns:
+        type: "array<object>"
+        required: true
+        description: "Column definitions with key, label, and type"
+        schema:
+          - key: "string (data key)"
+          - label: "string (display label)"
+          - type: "string (string|number|boolean)"
+      dataPath:
+        type: "string"
+        required: true
+        description: "Path in data model to bind table data (e.g., /products)"
+
+  Chart:
+    description: "Data visualization component supporting multiple chart types"
+    props:
+      config:
+        type: "object"
+        required: true
+        description: "Chart configuration"
+        schema:
+          type: "string (line|bar|pie|area)"
+          xKey: "string (data key for X-axis)"
+          yKey: "string (data key for Y-axis)"
+          dataPath: "string (path in data model)"
+      title:
+        type: "LiteralString"
+        required: false
+        description: "Optional chart title"
+    supported_chart_types:
+      - line: "For trends over time, continuous data"
+      - bar: "For comparing values across categories"
+      - pie: "For showing proportions/percentages"
+      - area: "For cumulative values over time"
+
+  Form:
+    description: "Form container for input elements"
+    props:
+      children:
+        type: "array<string>"
+        required: true
+        description: "List of form field component IDs"
+      submitActionId:
+        type: "string"
+        required: true
+        description: "Action ID for form submission handler"
+
+  TextField:
+    description: "Text input field"
+    props:
+      label:
+        type: "LiteralString"
+        required: true
+        description: "Field label"
+      bindingPath:
+        type: "string"
+        required: true
+        description: "Path in data model to bind value (e.g., /formData/name)"
+      placeholder:
+        type: "LiteralString"
+        required: false
+        description: "Placeholder hint text"
+
+  DateTimeInput:
+    description: "Date and/or time input field"
+    props:
+      label:
+        type: "LiteralString"
+        required: true
+        description: "Field label"
+      bindingPath:
+        type: "string"
+        required: true
+        description: "Path in data model to bind value"
+      mode:
+        type: "string"
+        required: false
+        default: "date"
+        options: ["date", "time", "datetime"]
+        description: "Input mode"
+
+usage_notes:
+  - "Use flat adjacency list structure - components reference children by ID, not nesting"
+  - "All text content must use LiteralString format: {literalString: 'content'}"
+  - "Data binding uses paths like /products, /salesData, /formData/fieldName"
+  - "Component IDs must be unique within a surface"
+  - "Message sequence: surfaceUpdate -> dataModelUpdate(s) -> beginRendering"

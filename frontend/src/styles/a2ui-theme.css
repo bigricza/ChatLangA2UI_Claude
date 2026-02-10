@@ -1,0 +1,320 @@
+/**
+ * A2UI Component Theme
+ *
+ * Styling for all A2UI components with a modern, clean design.
+ */
+
+/* Global Styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* A2UI Root Container */
+.a2ui-root {
+  width: 100%;
+  padding: 0;
+}
+
+/* Layout Components */
+.a2ui-row {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.a2ui-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Text Component */
+.a2ui-text {
+  margin: 0;
+  color: #1f2937;
+  line-height: 1.5;
+}
+
+.a2ui-text.text-title {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #111827;
+}
+
+.a2ui-text.text-subtitle {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #374151;
+}
+
+.a2ui-text.text-body {
+  font-size: 16px;
+  font-weight: 400;
+  color: #4b5563;
+}
+
+/* Card Component */
+.a2ui-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.2s ease;
+  margin-bottom: 16px;
+}
+
+.a2ui-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.a2ui-card-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #e5e7eb;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px 12px 0 0;
+}
+
+.a2ui-card-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: white;
+}
+
+.a2ui-card-content {
+  padding: 24px;
+}
+
+/* Button Component */
+.a2ui-button {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 100px;
+}
+
+.a2ui-button-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.a2ui-button-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.a2ui-button-secondary {
+  background: #6b7280;
+  color: white;
+}
+
+.a2ui-button-secondary:hover {
+  background: #4b5563;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(75, 85, 99, 0.4);
+}
+
+.a2ui-button-danger {
+  background: #ef4444;
+  color: white;
+}
+
+.a2ui-button-danger:hover {
+  background: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+.a2ui-button:active {
+  transform: translateY(0);
+}
+
+/* Form Component */
+.a2ui-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.a2ui-textfield {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.a2ui-textfield label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.a2ui-textfield input,
+.a2ui-textfield textarea {
+  padding: 10px 14px;
+  font-size: 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.a2ui-textfield input:focus,
+.a2ui-textfield textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.a2ui-textfield textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Table Component */
+.a2ui-table-container {
+  overflow-x: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: white;
+}
+
+.a2ui-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.a2ui-table thead {
+  background: #f9fafb;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.a2ui-table th {
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  color: #374151;
+  white-space: nowrap;
+}
+
+.a2ui-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f3f4f6;
+  color: #4b5563;
+}
+
+.a2ui-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+.a2ui-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.a2ui-table-empty {
+  padding: 40px;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+/* Chart Component */
+.a2ui-chart {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  min-height: 350px;
+  min-width: 350px;
+}
+
+.a2ui-chart-title {
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.a2ui-chart-empty {
+  padding: 40px;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+.a2ui-chart-empty h3 {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #374151;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .a2ui-row {
+    flex-direction: column;
+  }
+
+  .a2ui-card-content {
+    padding: 16px;
+  }
+
+  .a2ui-text.text-title {
+    font-size: 24px;
+  }
+
+  .a2ui-text.text-subtitle {
+    font-size: 18px;
+  }
+
+  .a2ui-table {
+    font-size: 12px;
+  }
+
+  .a2ui-table th,
+  .a2ui-table td {
+    padding: 8px 12px;
+  }
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.a2ui-card,
+.a2ui-chart,
+.a2ui-table-container {
+  animation: fadeIn 0.3s ease-out;
+}
