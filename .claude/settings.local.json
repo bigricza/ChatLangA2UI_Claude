@@ -8,7 +8,14 @@
       "WebFetch(domain:www.copilotkit.ai)",
       "Bash(npm install:*)",
       "Bash(npm search:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(taskkill:*)",
+      "Bash(timeout:*)",
+      "Bash(tasklist:*)",
+      "Bash(findstr:*)",
+      "Bash(powershell -Command \"Stop-Process -Id 10764,65404 -Force\")",
+      "Bash(powershell -Command \"Get-Process python | Select-Object Id, StartTime, CommandLine | Format-Table -AutoSize\")",
+      "Bash(powershell -Command:*)"
     ]
   }
 }

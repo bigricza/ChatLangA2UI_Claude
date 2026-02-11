@@ -11,8 +11,13 @@ interface A2UITextFieldProps {
 }
 
 export function A2UITextField({ data }: A2UITextFieldProps) {
-  const label = data.label?.literalString;
-  const placeholder = data.placeholder?.literalString;
+  // Handle both formats: plain string or {literalString: "..."}
+  const label = typeof data.label === 'string'
+    ? data.label
+    : data.label?.literalString;
+  const placeholder = typeof data.placeholder === 'string'
+    ? data.placeholder
+    : data.placeholder?.literalString;
   const inputType = data.type || "text";
   const isMultiline = data.multiline || false;
 

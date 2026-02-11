@@ -51,12 +51,17 @@ export function ComponentRegistry({
   // Map A2UI component types to React components
   switch (componentType) {
     case "Text":
-      // Resolve dataPath or dataBinding if present
+      // Check for dataPath at top level (incorrect format from backend)
+      const topLevelPath = componentData.dataPath || componentData.dataBinding;
+      // Check for dataPath inside text property (correct format)
       const textPath = componentData.text?.dataPath || componentData.text?.dataBinding;
-      if (textPath) {
-        const resolvedText = resolveDataPath(textPath);
+
+      const pathToResolve = topLevelPath || textPath;
+
+      if (pathToResolve) {
+        const resolvedText = resolveDataPath(pathToResolve);
         console.log('[ComponentRegistry] Text path resolution:', {
-          path: textPath,
+          path: pathToResolve,
           resolvedValue: resolvedText,
           dataModel: surface.dataModel["/"]
         });
@@ -130,15 +135,37 @@ export function ComponentRegistry({
     case "Table":
       // Get data from data model using dataPath
       const tablePath = componentData.dataPath;
-      const resolvedTableData = tablePath ? resolveDataPath(tablePath) : [];
+      let resolvedTableData = tablePath ? resolveDataPath(tablePath) : [];
+
+      // Unwrap if data is in a "data" property (common backend pattern)
+      if (resolvedTableData && typeof resolvedTableData === 'object' && 'data' in resolvedTableData) {
+        resolvedTableData = resolvedTableData.data;
+      }
+
       const tableData = Array.isArray(resolvedTableData) ? resolvedTableData : [];
+      console.log('[ComponentRegistry] Table data resolution:', {
+        path: tablePath,
+        resolvedData: resolvedTableData,
+        finalArray: tableData
+      });
       return <A2UITable data={componentData} tableData={tableData} />;
 
     case "Chart":
       // Get data from data model using dataPath
       const chartPath = componentData.config.dataPath;
-      const resolvedChartData = chartPath ? resolveDataPath(chartPath) : [];
+      let resolvedChartData = chartPath ? resolveDataPath(chartPath) : [];
+
+      // Unwrap if data is in a "data" property (common backend pattern)
+      if (resolvedChartData && typeof resolvedChartData === 'object' && 'data' in resolvedChartData) {
+        resolvedChartData = resolvedChartData.data;
+      }
+
       const chartData = Array.isArray(resolvedChartData) ? resolvedChartData : [];
+      console.log('[ComponentRegistry] Chart data resolution:', {
+        path: chartPath,
+        resolvedData: resolvedChartData,
+        finalArray: chartData
+      });
       return <A2UIChart data={componentData} chartData={chartData} />;
 
     case "Form":
@@ -158,9 +185,13 @@ export function ComponentRegistry({
       return <A2UITextField data={componentData} />;
 
     case "DateTimeInput":
+      // Handle both formats: plain string or {literalString: "..."}
+      const dateLabel = typeof componentData.label === 'string'
+        ? componentData.label
+        : componentData.label?.literalString;
       return (
         <div className="a2ui-datetime-input">
-          <label>{componentData.label?.literalString}</label>
+          {dateLabel && <label>{dateLabel}</label>}
           <input
             type={componentData.mode === "time" ? "time" : "date"}
           />

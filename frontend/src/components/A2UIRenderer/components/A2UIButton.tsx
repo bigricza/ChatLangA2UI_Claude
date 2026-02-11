@@ -11,7 +11,10 @@ interface A2UIButtonProps {
 }
 
 export function A2UIButton({ data }: A2UIButtonProps) {
-  const text = data.text.literalString;
+  // Handle both formats: plain string or {literalString: "..."}
+  const text = typeof data.text === 'string'
+    ? data.text
+    : data.text?.literalString || '';
   const hint = data.usage_hint || "primary";
 
   const handleClick = () => {

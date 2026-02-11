@@ -9,7 +9,10 @@ import {
   getCoreRowModel,
   flexRender,
   createColumnHelper,
+  getSortedRowModel,
+  SortingState,
 } from "@tanstack/react-table";
+import { useState } from "react";
 import type { TableComponent } from "../types";
 
 interface A2UITableProps {
@@ -18,10 +21,12 @@ interface A2UITableProps {
 }
 
 export function A2UITable({ data, tableData }: A2UITableProps) {
+  const [sorting, setSorting] = useState<SortingState>([]);
+
   // Create columns from A2UI column definitions
-  // Support both formats: {key, label, type} and {accessorKey, header}
+  // Support multiple formats: {key, label, type}, {accessorKey, header}, {dataPath, header}
   const columns = data.columns.map((col: any) => ({
-    accessorKey: col.accessorKey || col.key,
+    accessorKey: col.accessorKey || col.key || col.dataPath,
     header: col.header || col.label,
     cell: (info: any) => {
       const value = info.getValue();
@@ -37,6 +42,11 @@ export function A2UITable({ data, tableData }: A2UITableProps) {
     data: tableData,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    state: {
+      sorting,
+    },
+    onSortingChange: setSorting,
   });
 
   if (tableData.length === 0) {
@@ -54,11 +64,24 @@ export function A2UITable({ data, tableData }: A2UITableProps) {
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <th key={header.id}>
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext()
-                  )}
+                <th
+                  key={header.id}
+                  className="sortable"
+                  onClick={header.column.getToggleSortingHandler()}
+                  style={{ cursor: "pointer" }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
+                    <span className="sort-indicator">
+                      {{
+                        asc: "▲",
+                        desc: "▼",
+                      }[header.column.getIsSorted() as string] ?? "⇅"}
+                    </span>
+                  </div>
                 </th>
               ))}
             </tr>

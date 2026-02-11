@@ -4,10 +4,15 @@
  * Chat interface with dynamic A2UI rendering.
  */
 
-import { SimpleChatInterface } from "./components/SimpleChatInterface";
+import { AGUIChatInterface } from "./components/AGUIChatInterface";
+import { ThemeProvider } from "./contexts/ThemeContext";
 
 function App() {
-  return <SimpleChatInterface />;
+  return (
+    <ThemeProvider>
+      <AGUIChatInterface />
+    </ThemeProvider>
+  );
 }
 
 export default App;

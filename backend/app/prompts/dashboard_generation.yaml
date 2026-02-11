@@ -28,13 +28,61 @@ template: |
   - Charts need config with type, xKey, yKey, dataPath
   - Cards can have optional title and must have children list
 
+  ## Dashboard Templates:
+
+  You can choose from multiple layout templates to create variety. Detect template number from query (e.g., "template 2", "layout 3") or choose dynamically based on content:
+
+  **Template 1 - Classic Dashboard** (default):
+  - Title at top
+  - KPI cards in horizontal Row
+  - Charts in Row (side by side)
+  - Table at bottom
+  Structure: Column > [Title, Row(KPIs), Row(Charts), Table]
+
+  **Template 2 - Sidebar Layout**:
+  - Title at top
+  - Row with: Left Column (KPIs stacked vertically) + Right Column (Charts stacked)
+  - Table at bottom spanning full width
+  Structure: Column > [Title, Row(Column(KPIs), Column(Charts)), Table]
+
+  **Template 3 - Grid Layout**:
+  - Title at top
+  - 2x2 or 3x3 grid using Rows and Columns
+  - Each cell contains a Card with chart/metric/table
+  Structure: Column > [Title, Row(Card, Card), Row(Card, Card)]
+
+  **Template 4 - Feature Focus**:
+  - Title at top
+  - Large featured chart in Card (full width)
+  - Row of 3-4 smaller KPI cards below
+  - Secondary Row with smaller charts or table
+  Structure: Column > [Title, Card(MainChart), Row(KPIs), Row(SecondaryContent)]
+
+  **Template 5 - Card Stack**:
+  - Title at top
+  - Each major section in its own Card (vertically stacked)
+  - Card 1: KPIs in Row
+  - Card 2: Primary Chart
+  - Card 3: Secondary Chart
+  - Card 4: Data Table
+  Structure: Column > [Title, Card(Row(KPIs)), Card(Chart1), Card(Chart2), Card(Table)]
+
+  **Template 6 - Split View**:
+  - Title at top
+  - Two equal columns side by side
+  - Left: KPIs + Chart
+  - Right: Table or another Chart
+  Structure: Column > [Title, Row(Column(KPIs, Chart), Column(Table))]
+
   ## Design Principles:
   - Create clear visual hierarchy
   - Use Cards to group related content
   - Provide meaningful labels and titles
   - Include realistic sample data that matches the schema
   - Use appropriate chart types for the data being visualized
-  - For dashboards, include a title, KPI cards or metrics, charts, and tables as appropriate
+  - Vary layouts using different templates to create visual interest
+  - If user specifies template number (1-6), use that template
+  - If no template specified, choose dynamically based on content complexity
 
   ## Sample Data Guidelines:
   - Generate realistic sample data that makes sense for the request
@@ -42,5 +90,15 @@ template: |
   - For user data: use realistic names, emails, status values
   - For charts: provide 4-8 data points for good visualization
   - For tables: provide 3-10 rows of data
+
+  ## Template Selection Logic:
+  - Check user query for keywords: "template [1-6]", "layout [1-6]", "style [1-6]"
+  - If template number found, use that specific template
+  - If not specified, choose dynamically:
+    * Simple requests (1-2 metrics, 1 chart): Template 1 or 4
+    * Complex dashboards (many metrics, multiple charts): Template 2, 3, or 5
+    * Data-heavy (large tables): Template 6
+    * Randomly vary between appropriate templates for variety
+  - Always mention which template you used in your reasoning
 
   Generate A2UI that is both functional and aesthetically pleasing.

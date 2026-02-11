@@ -28,14 +28,16 @@ interface A2UIChartProps {
   chartData: any[];
 }
 
-// Colors for charts
+// Colors for charts - matching theme gradient
 const COLORS = [
+  "#667eea", // primary purple
+  "#764ba2", // deep purple
   "#3b82f6", // blue
-  "#8b5cf6", // purple
-  "#ec4899", // pink
   "#10b981", // green
   "#f59e0b", // amber
+  "#ec4899", // pink
   "#ef4444", // red
+  "#8b5cf6", // violet
 ];
 
 export function A2UIChart({ data, chartData }: A2UIChartProps) {
@@ -75,11 +77,39 @@ export function A2UIChart({ data, chartData }: A2UIChartProps) {
     );
   }
 
+  // Custom tooltip component
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="a2ui-chart-tooltip">
+          <p className="tooltip-label">{label}</p>
+          {payload.map((entry: any, index: number) => (
+            <p key={index} className="tooltip-value">
+              <span style={{ fontWeight: 600 }}>{entry.name}:</span>{" "}
+              <span style={{ color: entry.color }}>
+                {typeof entry.value === "number"
+                  ? entry.value.toLocaleString()
+                  : entry.value}
+              </span>
+            </p>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
+
+  // Click handler for chart elements
+  const handleClick = (data: any) => {
+    console.log("[A2UIChart] Chart element clicked:", data);
+    // In a full implementation, this could trigger actions or navigate
+  };
+
   const renderChart = () => {
     switch (config.type) {
       case "line":
         return (
-          <LineChart width={500} height={300} data={chartData}>
+          <LineChart width={500} height={300} data={chartData} onClick={handleClick}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
             <XAxis
               dataKey={config.xKey}
@@ -87,28 +117,22 @@ export function A2UIChart({ data, chartData }: A2UIChartProps) {
               style={{ fontSize: "12px" }}
             />
             <YAxis stroke="#6b7280" style={{ fontSize: "12px" }} />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: "#ffffff",
-                border: "1px solid #e5e7eb",
-                borderRadius: "6px",
-              }}
-            />
+            <Tooltip content={<CustomTooltip />} />
             <Legend />
             <Line
               type="monotone"
               dataKey={config.yKey}
               stroke={COLORS[0]}
               strokeWidth={2}
-              dot={{ fill: COLORS[0], r: 4 }}
-              activeDot={{ r: 6 }}
+              dot={{ fill: COLORS[0], r: 4, cursor: "pointer" }}
+              activeDot={{ r: 8, cursor: "pointer" }}
             />
           </LineChart>
         );
 
       case "bar":
         return (
-          <BarChart width={500} height={300} data={chartData}>
+          <BarChart width={500} height={300} data={chartData} onClick={handleClick}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
             <XAxis
               dataKey={config.xKey}
@@ -116,21 +140,20 @@ export function A2UIChart({ data, chartData }: A2UIChartProps) {
               style={{ fontSize: "12px" }}
             />
             <YAxis stroke="#6b7280" style={{ fontSize: "12px" }} />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: "#ffffff",
-                border: "1px solid #e5e7eb",
-                borderRadius: "6px",
-              }}
-            />
+            <Tooltip content={<CustomTooltip />} />
             <Legend />
-            <Bar dataKey={config.yKey} fill={COLORS[1]} radius={[4, 4, 0, 0]} />
+            <Bar
+              dataKey={config.yKey}
+              fill={COLORS[1]}
+              radius={[4, 4, 0, 0]}
+              cursor="pointer"
+            />
           </BarChart>
         );
 
       case "pie":
         return (
-          <PieChart width={500} height={300}>
+          <PieChart width={500} height={300} onClick={handleClick}>
             <Pie
               data={chartData}
               dataKey={config.yKey}
@@ -140,6 +163,7 @@ export function A2UIChart({ data, chartData }: A2UIChartProps) {
               outerRadius={100}
               label={(entry) => entry[config.xKey]}
               labelLine={false}
+              cursor="pointer"
             >
               {chartData.map((entry, index) => (
                 <Cell
@@ -148,14 +172,14 @@ export function A2UIChart({ data, chartData }: A2UIChartProps) {
                 />
               ))}
             </Pie>
-            <Tooltip />
+            <Tooltip content={<CustomTooltip />} />
             <Legend />
           </PieChart>
         );
 
       case "area":
         return (
-          <AreaChart width={500} height={300} data={chartData}>
+          <AreaChart width={500} height={300} data={chartData} onClick={handleClick}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
             <XAxis
               dataKey={config.xKey}
@@ -163,13 +187,7 @@ export function A2UIChart({ data, chartData }: A2UIChartProps) {
               style={{ fontSize: "12px" }}
             />
             <YAxis stroke="#6b7280" style={{ fontSize: "12px" }} />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: "#ffffff",
-                border: "1px solid #e5e7eb",
-                borderRadius: "6px",
-              }}
-            />
+            <Tooltip content={<CustomTooltip />} />
             <Legend />
             <Area
               type="monotone"
@@ -177,6 +195,7 @@ export function A2UIChart({ data, chartData }: A2UIChartProps) {
               stroke={COLORS[2]}
               fill={COLORS[2]}
               fillOpacity={0.3}
+              cursor="pointer"
             />
           </AreaChart>
         );

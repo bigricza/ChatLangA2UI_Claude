@@ -11,7 +11,13 @@ interface A2UITextProps {
 }
 
 export function A2UIText({ data }: A2UITextProps) {
-  const text = data.text.literalString;
+  // Handle undefined or missing text gracefully
+  if (!data.text) {
+    console.warn('[A2UIText] Missing text data:', data);
+    return null;
+  }
+
+  const text = data.text.literalString || "";
   const hint = data.usage_hint || "body";
 
   const className = `a2ui-text a2ui-text-${hint}`;

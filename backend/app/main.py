@@ -6,7 +6,7 @@ Main entry point for the backend server with CopilotKit integration.
 
 import os
 from dotenv import load_dotenv
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
@@ -37,6 +37,23 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Agent graphs cache (lazy initialization)
+_agents_cache = {
+    "dashboard": None,
+    "data_viz": None,
+    "form": None
+}
+
+def get_agents():
+    """Get or build agent graphs (lazy initialization)"""
+    if _agents_cache["dashboard"] is None:
+        print("Building LangGraph agents...")
+        _agents_cache["dashboard"] = build_dashboard_agent()
+        _agents_cache["data_viz"] = build_data_viz_agent()
+        _agents_cache["form"] = build_form_agent()
+        print("[OK] Agents built successfully")
+    return _agents_cache["dashboard"], _agents_cache["data_viz"], _agents_cache["form"]
+
 # Health check endpoint
 @app.get("/health")
 def health_check():
@@ -55,6 +72,7 @@ def root():
         "description": "AI-powered A2UI generation backend",
         "endpoints": {
             "health": "/health",
+            "agui-stream": "/agui/stream",
             "copilotkit": "/copilotkit",
             "test-dashboard": "/test/dashboard",
             "docs": "/docs"
@@ -84,6 +102,9 @@ async def generate_ui(request: dict):
 
     try:
         print(f"\n[API] Generating UI for message: {message}")
+
+        # Get agents (lazy initialization)
+        dashboard_graph, _, _ = get_agents()
 
         # For POC, use the dashboard agent for all requests
         # In production, you'd route to appropriate agent based on message intent
@@ -134,12 +155,15 @@ async def generate_ui(request: dict):
             "error": str(e)
         }
 
-# Build agent graphs
-print("Building LangGraph agents...")
-dashboard_graph = build_dashboard_agent()
-data_viz_graph = build_data_viz_agent()
-form_graph = build_form_agent()
-print("[OK] Agents built successfully")
+# AG-UI streaming endpoint with SSE
+@app.post("/agui/stream")
+async def agui_stream(request: Request):
+    """AG-UI protocol endpoint with SSE streaming"""
+    from app.agui_endpoint import agui_stream_endpoint
+    dashboard_graph, data_viz_graph, form_graph = get_agents()
+    return await agui_stream_endpoint(request, dashboard_graph, data_viz_graph, form_graph)
+
+print("[OK] AG-UI streaming endpoint configured at /agui/stream")
 
 # CopilotKit integration will be added here
 # Note: The CopilotKit Python SDK API may vary. This is a placeholder for the integration.
@@ -149,6 +173,9 @@ try:
     # Attempt to import and configure CopilotKit
     from copilotkit.integrations.fastapi import add_fastapi_endpoint
     from copilotkit import CopilotKitRemoteEndpoint, LangGraphAgent
+
+    # Get agents (lazy initialization)
+    dashboard_graph, data_viz_graph, form_graph = get_agents()
 
     # Wrap agents
     agents = [
