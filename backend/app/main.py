@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
 # Load environment variables
-load_dotenv()
+load_dotenv(override=True)
 
 # Import agents
 from app.agents import (
@@ -28,7 +28,8 @@ app = FastAPI(
 )
 
 # CORS configuration for local development
-cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:5173").split(",")
+cors_origins = [origin.strip() for origin in os.getenv("CORS_ORIGINS", "http://localhost:5173,http://localhost:5174").split(",")]
+print(f"[CORS] Allowed origins: {cors_origins}")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=cors_origins,
