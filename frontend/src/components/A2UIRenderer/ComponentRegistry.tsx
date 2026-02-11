@@ -59,15 +59,14 @@ export function ComponentRegistry({
       const pathToResolve = topLevelPath || textPath;
 
       if (pathToResolve) {
-        const resolvedText = resolveDataPath(pathToResolve);
-        console.log('[ComponentRegistry] Text path resolution:', {
-          path: pathToResolve,
-          resolvedValue: resolvedText,
-          dataModel: surface.dataModel["/"]
-        });
+        let resolvedText = resolveDataPath(pathToResolve);
+        // Unwrap {"data": "value"} pattern from dataModelUpdate contents
+        if (resolvedText && typeof resolvedText === 'object' && 'data' in resolvedText) {
+          resolvedText = resolvedText.data;
+        }
         const modifiedData = {
           ...componentData,
-          text: { literalString: String(resolvedText || "") },
+          text: { literalString: String(resolvedText ?? "") },
         };
         return <A2UIText data={modifiedData} />;
       }

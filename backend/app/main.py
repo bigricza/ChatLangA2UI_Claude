@@ -38,31 +38,41 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Agent graphs cache (lazy initialization)
-_agents_cache = {
-    "dashboard": None,
-    "data_viz": None,
-    "form": None
-}
+# Agent graphs cache keyed by provider (lazy initialization)
+_agents_cache: dict[str, dict] = {}
 
-def get_agents():
-    """Get or build agent graphs (lazy initialization)"""
-    if _agents_cache["dashboard"] is None:
-        print("Building LangGraph agents...")
-        _agents_cache["dashboard"] = build_dashboard_agent()
-        _agents_cache["data_viz"] = build_data_viz_agent()
-        _agents_cache["form"] = build_form_agent()
-        print("[OK] Agents built successfully")
-    return _agents_cache["dashboard"], _agents_cache["data_viz"], _agents_cache["form"]
+def get_agents(provider: str | None = None):
+    """Get or build agent graphs for a specific provider (lazy initialization)"""
+    if provider is None:
+        provider = os.getenv("LLM_PROVIDER", "anthropic").lower()
+
+    if provider not in _agents_cache:
+        print(f"Building LangGraph agents for provider: {provider}...")
+        _agents_cache[provider] = {
+            "dashboard": build_dashboard_agent(provider=provider),
+            "data_viz": build_data_viz_agent(provider=provider),
+            "form": build_form_agent(provider=provider),
+        }
+        print(f"[OK] Agents built successfully for {provider}")
+
+    cache = _agents_cache[provider]
+    return cache["dashboard"], cache["data_viz"], cache["form"]
 
 # Health check endpoint
 @app.get("/health")
 def health_check():
     """Health check endpoint"""
+    provider = os.getenv("LLM_PROVIDER", "anthropic").lower()
+    model = (
+        os.getenv("GOOGLE_MODEL", "gemini-2.5-flash") if provider == "google"
+        else os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-5-20250929")
+    )
     return {
         "status": "ok",
         "service": "ChatLangA2UI",
-        "version": "1.0.0"
+        "version": "1.0.0",
+        "llm_provider": provider,
+        "llm_model": model,
     }
 
 @app.get("/")
@@ -161,8 +171,11 @@ async def generate_ui(request: dict):
 async def agui_stream(request: Request):
     """AG-UI protocol endpoint with SSE streaming"""
     from app.agui_endpoint import agui_stream_endpoint
-    dashboard_graph, data_viz_graph, form_graph = get_agents()
-    return await agui_stream_endpoint(request, dashboard_graph, data_viz_graph, form_graph)
+    # Peek at the body to get provider (endpoint will also parse it)
+    body = await request.json()
+    provider = body.get("llm_provider", None)
+    dashboard_graph, data_viz_graph, form_graph = get_agents(provider)
+    return await agui_stream_endpoint(request, dashboard_graph, data_viz_graph, form_graph, body=body)
 
 print("[OK] AG-UI streaming endpoint configured at /agui/stream")
 

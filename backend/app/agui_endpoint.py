@@ -12,15 +12,16 @@ import json
 import asyncio
 
 
-async def agui_stream_endpoint(request: Request, dashboard_graph, data_viz_graph, form_graph):
+async def agui_stream_endpoint(request: Request, dashboard_graph, data_viz_graph, form_graph, body: dict | None = None):
     """
     AG-UI protocol endpoint with SSE streaming.
 
     Streams A2UI JSONL responses line by line for real-time UI updates.
     """
 
-    # Parse request body BEFORE creating the streaming response
-    body = await request.json()
+    # Use pre-parsed body if provided, otherwise parse from request
+    if body is None:
+        body = await request.json()
     message = body.get("message", "")
     agent_name = body.get("agent", "dashboard_agent")
 
@@ -42,7 +43,7 @@ async def agui_stream_endpoint(request: Request, dashboard_graph, data_viz_graph
             await asyncio.sleep(0.05)
 
             # Status: Calling LLM
-            yield f"data: {json.dumps({'type': 'status', 'message': 'Calling Claude AI to generate UI...'})}\n\n"
+            yield f"data: {json.dumps({'type': 'status', 'message': 'Calling LLM AI to generate UI...'})}\n\n"
             await asyncio.sleep(0.05)
 
             # Periodic status messages during agent processing

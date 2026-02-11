@@ -17,7 +17,8 @@
       "Bash(powershell -Command \"Get-Process python | Select-Object Id, StartTime, CommandLine | Format-Table -AutoSize\")",
       "Bash(powershell -Command:*)",
       "Bash(npm run dev:*)",
-      "Bash(1 <<'PYEOF'\nimport os\nfrom dotenv import load_dotenv\nload_dotenv\\(override=True\\)\nfrom app.main import app\n# Force build middleware\nfrom starlette.testclient import TestClient\nclient = TestClient\\(app, raise_server_exceptions=False\\)\nresponse = client.options\\(\"/agui/stream\", headers={\n    \"Origin\": \"http://localhost:5174\",\n    \"Access-Control-Request-Method\": \"POST\",\n    \"Access-Control-Request-Headers\": \"Content-Type\",\n}\\)\nprint\\(\"Status:\", response.status_code\\)\nprint\\(\"Headers:\", dict\\(response.headers\\)\\)\nprint\\(\"Body:\", response.text\\)\nPYEOF)"
+      "Bash(1 <<'PYEOF'\nimport os\nfrom dotenv import load_dotenv\nload_dotenv\\(override=True\\)\nfrom app.main import app\n# Force build middleware\nfrom starlette.testclient import TestClient\nclient = TestClient\\(app, raise_server_exceptions=False\\)\nresponse = client.options\\(\"/agui/stream\", headers={\n    \"Origin\": \"http://localhost:5174\",\n    \"Access-Control-Request-Method\": \"POST\",\n    \"Access-Control-Request-Headers\": \"Content-Type\",\n}\\)\nprint\\(\"Status:\", response.status_code\\)\nprint\\(\"Headers:\", dict\\(response.headers\\)\\)\nprint\\(\"Body:\", response.text\\)\nPYEOF)",
+      "Bash(pip install:*)"
     ]
   }
 }

@@ -45,6 +45,11 @@ export function AGUIChatInterface() {
   const [showHistory, setShowHistory] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
   const [streamingStatus, setStreamingStatus] = useState("");
+  const [llmProvider, setLlmProvider] = useState<string>("google");
+  const [providers] = useState([
+    { id: "google", label: "Gemini", color: "#4285F4" },
+    { id: "anthropic", label: "Claude", color: "#D97706" },
+  ]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -54,6 +59,14 @@ export function AGUIChatInterface() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Load default provider from backend on mount
+  useEffect(() => {
+    fetch("http://localhost:8123/health")
+      .then((r) => r.json())
+      .then((data) => setLlmProvider(data.llm_provider || "google"))
+      .catch(() => {});
+  }, []);
 
   const sendMessage = async (messageText?: string) => {
     const text = messageText || input;
@@ -77,7 +90,7 @@ export function AGUIChatInterface() {
       const response = await fetch("http://localhost:8123/agui/stream", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text, agent: "dashboard_agent" }),
+        body: JSON.stringify({ message: text, agent: "dashboard_agent", llm_provider: llmProvider }),
       });
 
       if (!response.ok) {
@@ -232,7 +245,36 @@ export function AGUIChatInterface() {
           <div className="header-content">
             <div>
               <h1>ChatLangA2UI</h1>
-              <p>AI-powered dynamic UI generation with Claude & A2UI (AG-UI Protocol + SSE)</p>
+              <p>AI-powered dynamic UI generation with A2UI (AG-UI Protocol + SSE)</p>
+              <select
+                value={llmProvider}
+                onChange={(e) => setLlmProvider(e.target.value)}
+                disabled={loading}
+                style={{
+                  marginTop: "4px",
+                  padding: "4px 10px",
+                  fontSize: "12px",
+                  fontWeight: 600,
+                  borderRadius: "12px",
+                  border: "none",
+                  backgroundColor: providers.find((p) => p.id === llmProvider)?.color || "#4285F4",
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='white'/%3E%3C/svg%3E")`,
+                  backgroundRepeat: "no-repeat",
+                  backgroundPosition: "right 8px center",
+                  color: "#fff",
+                  cursor: loading ? "not-allowed" : "pointer",
+                  outline: "none",
+                  appearance: "none",
+                  WebkitAppearance: "none",
+                  paddingRight: "22px",
+                }}
+              >
+                {providers.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.label}
+                  </option>
+                ))}
+              </select>
             </div>
             <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
               <button

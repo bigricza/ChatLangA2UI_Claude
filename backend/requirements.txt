@@ -8,6 +8,7 @@ copilotkit==0.1.26
 # LangChain and LangGraph (compatible with copilotkit 0.1.26)
 langchain>=0.3.3
 langchain-anthropic>=0.2.3,<0.3.0
+langchain-google-genai>=2.0.0,<3.0.0
 langchain-core>=0.3.0
 langgraph>=0.2.0
 
