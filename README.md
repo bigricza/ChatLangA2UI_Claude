@@ -20,7 +20,7 @@ History in the current session
 
 Streaming protocol message can be seen in the Inspector / Network / EventStream.
 THis can be anhanced with a lot more event type. See the AG-UI protocol documentation for more.
-![alt text](image-2.png)
+![alt text](image-3.png)
 
 ## Architecture
 
